@@ -1,0 +1,10 @@
+{
+  "name": "sls-oauth-instagram",
+  "version": "1.0.0",
+  "author": "Mathieu Mailhos",
+  "dependencies": {
+    "aws-sdk": "^2.54.0",
+    "firebase-admin": "^4.0.0",
+    "simple-oauth2": "^1.2.0"
+  }
+}
