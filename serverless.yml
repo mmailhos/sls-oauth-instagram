@@ -1,0 +1,47 @@
+service: sls-oauth-instagram
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: eu-west-1
+  memorySize: 128
+  environment:
+    instagram_id: ${file(./credentials.yml):myapp.instagram_id}
+    instagram_secret: ${file(./credentials.yml):myapp.instagram_secret}
+    instagram_tokenHost: https://api.instagram.com
+    instagram_tokenPath: /oauth/access_token
+    firebase_key: ${file(./credentials.yml):myapp.firebase_key}
+    firebase_auth_domain: ${file(./credentials.yml):myapp.firebase_auth_domain}
+    firebase_database_url: ${file(./credentials.yml):myapp.firebase_database_url}
+    firebase_storage_bucket: ${file(./credentials.yml):myapp.firebase_storage_bucket}
+    firebase_messenger_id: ${file(./credentials.yml):myapp.firebase_messenger_id}
+    instafeed_js_url: https://s3.amazonaws.com/${file(./credentials.yml):myapp.bucket}/public/instafeed.min.js
+    main_js_url: https://s3.amazonaws.com/${file(./credentials.yml):myapp.bucket}/public/main.js
+    main_css_url: https://s3.amazonaws.com/${file(./credentials.yml):myapp.bucket}/public/main.css
+
+functions:
+  oauth_redirect:
+    handler: src/oauth_redirect.oauth_redirect
+    events:
+      - http:
+          path: redirect
+          method: get
+  oauth_callback:
+    handler: src/oauth_callback.oauth_callback
+    timeout: 20
+    events:
+      - http:
+          path: 'instagram-callback'
+          method: get
+    package:
+      include:
+        - service-account.json
+  serve_index:
+    handler: src/serve_index.serve_index
+    events:
+      - http:
+          path: index
+          method: get
+    package:
+      include:
+        - templates/index.html
